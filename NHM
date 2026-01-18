@@ -1,0 +1,84 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>System Access</title>
+<style>
+    body {
+        background: black;
+        color: #00ff00;
+        font-family: monospace;
+        padding: 20px;
+        overflow: hidden;
+    }
+    #terminal {
+        white-space: pre-wrap;
+        font-size: 14px;
+        line-height: 1.4;
+    }
+    .blink {
+        animation: blink 1s infinite;
+    }
+    @keyframes blink {
+        50% { opacity: 0; }
+    }
+</style>
+</head>
+<body>
+
+<div id="terminal"></div>
+
+<script>
+const terminal = document.getElementById("terminal");
+
+const userAgent = navigator.userAgent;
+let device = "Unknown device";
+
+if (/android/i.test(userAgent)) device = "Android Phone";
+else if (/iphone|ipad|ipod/i.test(userAgent)) device = "iPhone / iOS";
+else if (/windows/i.test(userAgent)) device = "Windows PC";
+else if (/mac/i.test(userAgent)) device = "MacOS";
+else if (/linux/i.test(userAgent)) device = "Linux";
+
+const lines = [
+    "Initializing system access...",
+    "Connecting to remote host ██████████ 100%",
+    "Bypassing firewall...",
+    "Decrypting packets...",
+    "Access granted.",
+    "",
+    ">>> DEVICE DETECTED:",
+    `>>> ${device}`,
+    "",
+    "Collecting system information...",
+    "IP Address: 192.168.xxx.xxx",
+    "Location: Vietnam",
+    "Scanning memory blocks...",
+    "Injecting payload...",
+    "",
+    "WARNING: Unauthorized access detected!",
+    "Uploading data...",
+    "████████████████████████████ 100%",
+    "",
+    "Session active...",
+    "Press CTRL+C to terminate",
+];
+
+let index = 0;
+
+function typeLine() {
+    if (index < lines.length) {
+        terminal.innerHTML += lines[index] + "\n";
+        index++;
+        setTimeout(typeLine, 120);
+    } else {
+        terminal.innerHTML += "\n> _<span class='blink'>█</span>";
+    }
+}
+
+typeLine();
+</script>
+
+</body>
+</html>
