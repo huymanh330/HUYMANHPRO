@@ -3,82 +3,181 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>System Access</title>
+<title>SECURITY BREACH</title>
+
 <style>
-    body {
-        background: black;
-        color: #00ff00;
-        font-family: monospace;
-        padding: 20px;
-        overflow: hidden;
-    }
-    #terminal {
-        white-space: pre-wrap;
-        font-size: 14px;
-        line-height: 1.4;
-    }
-    .blink {
-        animation: blink 1s infinite;
-    }
-    @keyframes blink {
-        50% { opacity: 0; }
-    }
+html, body {
+    margin: 0;
+    padding: 0;
+    background: black;
+    color: #00ff00;
+    font-family: monospace;
+    width: 100%;
+    height: 100%;
+    overflow: hidden;
+}
+
+#terminal {
+    padding: 20px;
+    white-space: pre-wrap;
+    font-size: 14px;
+}
+
+.progress {
+    width: 100%;
+    border: 1px solid #00ff00;
+    margin-top: 10px;
+}
+.bar {
+    height: 20px;
+    width: 0%;
+    background: #00ff00;
+}
+
+#camera {
+    margin-top: 15px;
+    width: 100%;
+    height: 220px;
+    border: 2px solid #00ff00;
+    position: relative;
+    display: none;
+    overflow: hidden;
+}
+
+.scan {
+    position: absolute;
+    width: 100%;
+    height: 2px;
+    background: #00ff00;
+    animation: scan 2s linear infinite;
+}
+
+@keyframes scan {
+    from { top: 0; }
+    to { top: 100%; }
+}
+
+.noise {
+    position: absolute;
+    width: 100%;
+    height: 100%;
+    background: repeating-linear-gradient(
+        0deg,
+        rgba(0,255,0,0.05),
+        rgba(0,255,0,0.05) 1px,
+        transparent 1px,
+        transparent 3px
+    );
+}
+
+.alert {
+    color: red;
+    font-weight: bold;
+    font-size: 18px;
+}
+
+.blink {
+    animation: blink 1s infinite;
+}
+@keyframes blink {
+    50% { opacity: 0; }
+}
 </style>
 </head>
-<body>
 
+<body>
 <div id="terminal"></div>
 
 <script>
-const terminal = document.getElementById("terminal");
+document.documentElement.requestFullscreen?.();
 
-const userAgent = navigator.userAgent;
-let device = "Unknown device";
+const t = document.getElementById("terminal");
 
-if (/android/i.test(userAgent)) device = "Android Phone";
-else if (/iphone|ipad|ipod/i.test(userAgent)) device = "iPhone / iOS";
-else if (/windows/i.test(userAgent)) device = "Windows PC";
-else if (/mac/i.test(userAgent)) device = "MacOS";
-else if (/linux/i.test(userAgent)) device = "Linux";
+function sleep(ms) {
+    return new Promise(r => setTimeout(r, ms));
+}
+function log(txt) {
+    t.innerHTML += txt + "\n";
+    window.scrollTo(0, document.body.scrollHeight);
+}
 
-const lines = [
-    "Initializing system access...",
-    "Connecting to remote host ██████████ 100%",
-    "Bypassing firewall...",
-    "Decrypting packets...",
-    "Access granted.",
-    "",
-    ">>> DEVICE DETECTED:",
-    `>>> ${device}`,
-    "",
-    "Collecting system information...",
-    "IP Address: 192.168.xxx.xxx",
-    "Location: Vietnam",
-    "Scanning memory blocks...",
-    "Injecting payload...",
-    "",
-    "WARNING: Unauthorized access detected!",
-    "Uploading data...",
-    "████████████████████████████ 100%",
-    "",
-    "Session active...",
-    "Press CTRL+C to terminate",
-];
+/* DEVICE */
+const ua = navigator.userAgent;
+let device = "Unknown";
+if (/android/i.test(ua)) device = "Android Phone";
+else if (/iphone|ipad/i.test(ua)) device = "iPhone / iOS";
+else if (/windows/i.test(ua)) device = "Windows PC";
+else if (/mac/i.test(ua)) device = "MacOS";
 
-let index = 0;
-
-function typeLine() {
-    if (index < lines.length) {
-        terminal.innerHTML += lines[index] + "\n";
-        index++;
-        setTimeout(typeLine, 120);
-    } else {
-        terminal.innerHTML += "\n> _<span class='blink'>█</span>";
+/* LOCATION */
+async function getLocation() {
+    try {
+        const r = await fetch("https://ipapi.co/json/");
+        return await r.json();
+    } catch {
+        return {};
     }
 }
 
-typeLine();
-</script>
+async function start() {
+    log("Initializing intrusion module...");
+    await sleep(400);
+    log("Bypassing firewall...");
+    await sleep(400);
+    log("Decrypting system...");
+    await sleep(400);
+    log("");
+    log(">>> DEVICE: " + device);
 
+    const loc = await getLocation();
+    log(">>> IP: " + (loc.ip || "Unknown"));
+    log(">>> City: " + (loc.city || "Unknown"));
+    log(">>> Country: " + (loc.country_name || "Unknown"));
+    log("");
+
+    /* CAMERA FAKE */
+    log("Accessing camera...");
+    await sleep(500);
+    log("Camera status: ACTIVE");
+    t.innerHTML += `
+        <div id="camera">
+            <div class="scan"></div>
+            <div class="noise"></div>
+        </div>
+    `;
+    document.getElementById("camera").style.display = "block";
+
+    await sleep(3000);
+    document.getElementById("camera").remove();
+    log("Camera capture complete.");
+    log("");
+
+    /* PROGRESS */
+    log("Uploading data...");
+    t.innerHTML += `<div class="progress"><div class="bar" id="bar"></div></div>\n`;
+
+    let bar = document.getElementById("bar");
+    let p = 0;
+    let i = setInterval(() => {
+        p++;
+        bar.style.width = p + "%";
+        if (p >= 100) {
+            clearInterval(i);
+            finish();
+        }
+    }, 35);
+}
+
+function finish() {
+    log("");
+    t.innerHTML += "<span class='alert'>⚠ WARNING: UNAUTHORIZED ACCESS DETECTED ⚠</span>\n";
+    log("All user activity is being monitored.");
+    log("Do not close this window.");
+    t.innerHTML += "\n> _<span class='blink'>█</span>";
+}
+
+start();
+</script>
 </body>
 </html>
+
