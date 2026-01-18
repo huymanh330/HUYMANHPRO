@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>SECURITY BREACH</title>
+<title>INTRUSION DETECTED</title>
 
 <style>
 html, body {
@@ -18,9 +18,11 @@ html, body {
 }
 
 #terminal {
-    padding: 20px;
+    padding: 15px;
     white-space: pre-wrap;
-    font-size: 14px;
+    font-size: 13px;
+    height: 100vh;
+    overflow-y: auto;
 }
 
 .progress {
@@ -29,18 +31,17 @@ html, body {
     margin-top: 10px;
 }
 .bar {
-    height: 20px;
+    height: 18px;
     width: 0%;
     background: #00ff00;
 }
 
 #camera {
-    margin-top: 15px;
+    margin-top: 10px;
     width: 100%;
     height: 220px;
     border: 2px solid #00ff00;
     position: relative;
-    display: none;
     overflow: hidden;
 }
 
@@ -49,9 +50,8 @@ html, body {
     width: 100%;
     height: 2px;
     background: #00ff00;
-    animation: scan 2s linear infinite;
+    animation: scan 1.5s linear infinite;
 }
-
 @keyframes scan {
     from { top: 0; }
     to { top: 100%; }
@@ -63,8 +63,8 @@ html, body {
     height: 100%;
     background: repeating-linear-gradient(
         0deg,
-        rgba(0,255,0,0.05),
-        rgba(0,255,0,0.05) 1px,
+        rgba(0,255,0,0.08),
+        rgba(0,255,0,0.08) 1px,
         transparent 1px,
         transparent 3px
     );
@@ -93,12 +93,41 @@ document.documentElement.requestFullscreen?.();
 
 const t = document.getElementById("terminal");
 
+function log(txt="") {
+    t.innerHTML += txt + "\n";
+    t.scrollTop = t.scrollHeight;
+}
 function sleep(ms) {
     return new Promise(r => setTimeout(r, ms));
 }
-function log(txt) {
-    t.innerHTML += txt + "\n";
-    window.scrollTo(0, document.body.scrollHeight);
+
+/* RANDOM HACK LINES */
+const spamLines = [
+    "Injecting packet stream...",
+    "Reading memory block 0x" + Math.random().toString(16).slice(2,8),
+    "Decrypting AES-256 channel...",
+    "Bypassing auth token...",
+    "Listening on port 443...",
+    "Spoofing MAC address...",
+    "Hooking kernel process...",
+    "Extracting session cookies...",
+    "Resolving DNS tunnel...",
+    "Writing buffer overflow...",
+    "Uploading encrypted payload...",
+    "Bruteforce handshake success",
+    "Packet loss: 0.01%",
+    "Thread execution granted",
+    "Hash verified: " + Math.random().toString(36).slice(2,10)
+];
+
+let spamInterval;
+function startSpam(speed=80) {
+    spamInterval = setInterval(() => {
+        log(spamLines[Math.floor(Math.random()*spamLines.length)]);
+    }, speed);
+}
+function stopSpam() {
+    clearInterval(spamInterval);
 }
 
 /* DEVICE */
@@ -120,59 +149,61 @@ async function getLocation() {
 }
 
 async function start() {
-    log("Initializing intrusion module...");
-    await sleep(400);
-    log("Bypassing firewall...");
-    await sleep(400);
-    log("Decrypting system...");
-    await sleep(400);
-    log("");
+    startSpam(70);
+
+    await sleep(800);
+    log(">>> INITIALIZING INTRUSION MODULE");
+    await sleep(500);
     log(">>> DEVICE: " + device);
 
     const loc = await getLocation();
     log(">>> IP: " + (loc.ip || "Unknown"));
-    log(">>> City: " + (loc.city || "Unknown"));
-    log(">>> Country: " + (loc.country_name || "Unknown"));
+    log(">>> CITY: " + (loc.city || "Unknown"));
+    log(">>> COUNTRY: " + (loc.country_name || "Unknown"));
     log("");
 
     /* CAMERA FAKE */
-    log("Accessing camera...");
+    log("Accessing camera stream...");
     await sleep(500);
     log("Camera status: ACTIVE");
+
     t.innerHTML += `
         <div id="camera">
             <div class="scan"></div>
             <div class="noise"></div>
         </div>
     `;
-    document.getElementById("camera").style.display = "block";
-
     await sleep(3000);
     document.getElementById("camera").remove();
-    log("Camera capture complete.");
+    log("Camera capture completed.");
     log("");
 
     /* PROGRESS */
-    log("Uploading data...");
+    log("Uploading extracted data...");
     t.innerHTML += `<div class="progress"><div class="bar" id="bar"></div></div>\n`;
 
     let bar = document.getElementById("bar");
     let p = 0;
-    let i = setInterval(() => {
+
+    const barInt = setInterval(() => {
         p++;
         bar.style.width = p + "%";
+        log("Transfer chunk " + p + "% complete");
         if (p >= 100) {
-            clearInterval(i);
+            clearInterval(barInt);
+            stopSpam();
             finish();
         }
-    }, 35);
+    }, 40);
 }
 
 function finish() {
     log("");
-    t.innerHTML += "<span class='alert'>⚠ WARNING: UNAUTHORIZED ACCESS DETECTED ⚠</span>\n";
-    log("All user activity is being monitored.");
-    log("Do not close this window.");
+    log("=================================");
+    log("⚠ WARNING: UNAUTHORIZED ACCESS ⚠");
+    log("All activities are being monitored");
+    log("Disconnecting is not advised");
+    log("=================================");
     t.innerHTML += "\n> _<span class='blink'>█</span>";
 }
 
@@ -180,4 +211,3 @@ start();
 </script>
 </body>
 </html>
-
