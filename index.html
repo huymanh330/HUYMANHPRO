@@ -1,213 +1,114 @@
 <!DOCTYPE html>
 <html lang="vi">
 <head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>INTRUSION DETECTED</title>
-
-<style>
-html, body {
-    margin: 0;
-    padding: 0;
-    background: black;
-    color: #00ff00;
-    font-family: monospace;
-    width: 100%;
-    height: 100%;
-    overflow: hidden;
-}
-
-#terminal {
-    padding: 15px;
-    white-space: pre-wrap;
-    font-size: 13px;
-    height: 100vh;
-    overflow-y: auto;
-}
-
-.progress {
-    width: 100%;
-    border: 1px solid #00ff00;
-    margin-top: 10px;
-}
-.bar {
-    height: 18px;
-    width: 0%;
-    background: #00ff00;
-}
-
-#camera {
-    margin-top: 10px;
-    width: 100%;
-    height: 220px;
-    border: 2px solid #00ff00;
-    position: relative;
-    overflow: hidden;
-}
-
-.scan {
-    position: absolute;
-    width: 100%;
-    height: 2px;
-    background: #00ff00;
-    animation: scan 1.5s linear infinite;
-}
-@keyframes scan {
-    from { top: 0; }
-    to { top: 100%; }
-}
-
-.noise {
-    position: absolute;
-    width: 100%;
-    height: 100%;
-    background: repeating-linear-gradient(
-        0deg,
-        rgba(0,255,0,0.08),
-        rgba(0,255,0,0.08) 1px,
-        transparent 1px,
-        transparent 3px
-    );
-}
-
-.alert {
-    color: red;
-    font-weight: bold;
-    font-size: 18px;
-}
-
-.blink {
-    animation: blink 1s infinite;
-}
-@keyframes blink {
-    50% { opacity: 0; }
-}
-</style>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>HACKER AI CALCULATOR</title>
+    <style>
+        body {
+            background-color: #000;
+            color: #0f0;
+            font-family: 'Courier New', Courier, monospace;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            margin: 0;
+            overflow: hidden;
+            text-shadow: 0 0 5px #0f0;
+        }
+        .container {
+            border: 2px solid #0f0;
+            padding: 30px;
+            background: rgba(0, 20, 0, 0.9);
+            box-shadow: 0 0 20px #0f0;
+            width: 350px;
+            text-align: center;
+        }
+        h2 { margin-bottom: 20px; letter-spacing: 5px; }
+        .input-group { margin-bottom: 15px; }
+        input {
+            background: #000;
+            border: 1px solid #0f0;
+            color: #0f0;
+            padding: 10px;
+            width: 50px;
+            text-align: center;
+            font-size: 1.2rem;
+            outline: none;
+        }
+        button {
+            background: #0f0;
+            color: #000;
+            border: none;
+            padding: 10px 20px;
+            cursor: pointer;
+            font-weight: bold;
+            text-transform: uppercase;
+            transition: 0.3s;
+        }
+        button:hover { background: #003300; color: #0f0; }
+        #result {
+            margin-top: 20px;
+            font-size: 1.5rem;
+            min-height: 40px;
+            border-top: 1px solid #0f0;
+            padding-top: 10px;
+        }
+        .cursor { animation: blink 1s infinite; }
+        @keyframes blink { 0%, 100% { opacity: 1; } 50% { opacity: 0; } }
+    </style>
 </head>
-
 <body>
-<div id="terminal"></div>
+
+<div class="container">
+    <h2>AI_SYSTEM_v2.6</h2>
+    <div class="input-group">
+        <input type="number" id="A" placeholder="A">
+        <input type="number" id="B" placeholder="B">
+        <input type="number" id="C" placeholder="C">
+        <input type="number" id="D" placeholder="D">
+    </div>
+    <button onclick="calculate()">EXECUTE</button>
+    <div id="result">WAITING FOR DATA...<span class="cursor">_</span></div>
+</div>
 
 <script>
-document.documentElement.requestFullscreen?.();
-
-const t = document.getElementById("terminal");
-
-function log(txt="") {
-    t.innerHTML += txt + "\n";
-    t.scrollTop = t.scrollHeight;
-}
-function sleep(ms) {
-    return new Promise(r => setTimeout(r, ms));
-}
-
-/* RANDOM HACK LINES */
-const spamLines = [
-    "Injecting packet stream...",
-    "Reading memory block 0x" + Math.random().toString(16).slice(2,8),
-    "Decrypting AES-256 channel...",
-    "Bypassing auth token...",
-    "Listening on port 443...",
-    "Spoofing MAC address...",
-    "Hooking kernel process...",
-    "Extracting session cookies...",
-    "Resolving DNS tunnel...",
-    "Writing buffer overflow...",
-    "Uploading encrypted payload...",
-    "Bruteforce handshake success",
-    "Packet loss: 0.01%",
-    "Thread execution granted",
-    "Hash verified: " + Math.random().toString(36).slice(2,10)
-];
-
-let spamInterval;
-function startSpam(speed=80) {
-    spamInterval = setInterval(() => {
-        log(spamLines[Math.floor(Math.random()*spamLines.length)]);
-    }, speed);
-}
-function stopSpam() {
-    clearInterval(spamInterval);
-}
-
-/* DEVICE */
-const ua = navigator.userAgent;
-let device = "Unknown";
-if (/android/i.test(ua)) device = "Android Phone";
-else if (/iphone|ipad/i.test(ua)) device = "iPhone / iOS";
-else if (/windows/i.test(ua)) device = "Windows PC";
-else if (/mac/i.test(ua)) device = "MacOS";
-
-/* LOCATION */
-async function getLocation() {
-    try {
-        const r = await fetch("https://ipapi.co/json/");
-        return await r.json();
-    } catch {
-        return {};
+    // Hàm rút gọn số thành 1 chữ số (Digital Root)
+    function reduceToSingleDigit(num) {
+        if (num === 0) return 0;
+        return (num - 1) % 9 + 1;
     }
-}
 
-async function start() {
-    startSpam(70);
+    function calculate() {
+        const a = parseInt(document.getElementById('A').value) || 0;
+        const b = parseInt(document.getElementById('B').value) || 0;
+        const c = parseInt(document.getElementById('C').value) || 0;
+        const d = parseInt(document.getElementById('D').value) || 0;
 
-    await sleep(800);
-    log(">>> INITIALIZING INTRUSION MODULE");
-    await sleep(500);
-    log(">>> DEVICE: " + device);
+        // Xử lý C và D trước
+        let cReduced = reduceToSingleDigit(c);
+        let dReduced = reduceToSingleDigit(d);
 
-    const loc = await getLocation();
-    log(">>> IP: " + (loc.ip || "Unknown"));
-    log(">>> CITY: " + (loc.city || "Unknown"));
-    log(">>> COUNTRY: " + (loc.country_name || "Unknown"));
-    log("");
+        // Cộng A với C_mới, B với D_mới
+        let resAC = reduceToSingleDigit(a + cReduced);
+        let resBD = reduceToSingleDigit(b + dReduced);
 
-    /* CAMERA FAKE */
-    log("Accessing camera stream...");
-    await sleep(500);
-    log("Camera status: ACTIVE");
+        // Tổng cuối cùng
+        let finalSum = resAC + resBD;
 
-    t.innerHTML += `
-        <div id="camera">
-            <div class="scan"></div>
-            <div class="noise"></div>
-        </div>
-    `;
-    await sleep(3000);
-    document.getElementById("camera").remove();
-    log("Camera capture completed.");
-    log("");
+        const resultDiv = document.getElementById('result');
+        resultDiv.innerHTML = "ANALYZING...";
 
-    /* PROGRESS */
-    log("Uploading extracted data...");
-    t.innerHTML += `<div class="progress"><div class="bar" id="bar"></div></div>\n`;
-
-    let bar = document.getElementById("bar");
-    let p = 0;
-
-    const barInt = setInterval(() => {
-        p++;
-        bar.style.width = p + "%";
-        log("Transfer chunk " + p + "% complete");
-        if (p >= 100) {
-            clearInterval(barInt);
-            stopSpam();
-            finish();
-        }
-    }, 40);
-}
-
-function finish() {
-    log("");
-    log("=================================");
-    log("⚠ WARNING: UNAUTHORIZED ACCESS ⚠");
-    log("All activities are being monitored");
-    log("Disconnecting is not advised");
-    log("=================================");
-    t.innerHTML += "\n> _<span class='blink'>█</span>";
-}
-
-start();
+        setTimeout(() => {
+            if (finalSum % 2 === 0) {
+                resultDiv.innerHTML = "RESULT: <span style='color: #00ffff'>CÁI</span>";
+            } else {
+                resultDiv.innerHTML = "RESULT: <span style='color: #ff0000'>CON</span>";
+            }
+        }, 800);
+    }
 </script>
+
 </body>
 </html>
