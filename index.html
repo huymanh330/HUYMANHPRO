@@ -3,99 +3,140 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>AI Baccarat Predictor</title>
+    <title>Baccarat AI Predictor - Pro</title>
     <style>
-        body { font-family: sans-serif; background: #1a1a1a; color: white; display: flex; flex-direction: column; align-items: center; padding: 20px; }
-        .container { background: #2d2d2d; padding: 20px; border-radius: 10px; box-shadow: 0 0 15px rgba(0,0,0,0.5); width: 100%; max-width: 500px; }
-        .input-group { margin-bottom: 15px; }
-        label { display: block; margin-bottom: 5px; font-weight: bold; color: #ffcc00; }
-        input { width: 95%; padding: 10px; border-radius: 5px; border: none; text-transform: uppercase; font-weight: bold; letter-spacing: 2px; }
-        button { width: 100%; padding: 15px; background: #e74c3c; color: white; border: none; border-radius: 5px; cursor: pointer; font-size: 16px; font-weight: bold; }
-        button:hover { background: #c0392b; }
-        .results { margin-top: 20px; display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
-        .res-box { background: #3d3d3d; padding: 15px; border-radius: 5px; text-align: center; border-left: 5px solid #ffcc00; }
-        .res-box h4 { margin: 0 0 10px 0; font-size: 14px; color: #aaa; }
-        .prediction { font-size: 24px; font-weight: bold; }
-        .P { color: #3498db; } .B { color: #e74c3c; } .T { color: #2ecc71; }
+        body { font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; background: #121212; color: #e0e0e0; display: flex; flex-direction: column; align-items: center; padding: 10px; margin: 0; }
+        .container { background: #1e1e1e; padding: 15px; border-radius: 12px; box-shadow: 0 8px 32px rgba(0,0,0,0.8); width: 95%; max-width: 450px; border: 1px solid #333; }
+        .road-section { background: #262626; padding: 12px; border-radius: 8px; margin-bottom: 15px; border-left: 4px solid #ffcc00; }
+        .road-title { font-size: 13px; font-weight: bold; color: #ffcc00; margin-bottom: 8px; text-transform: uppercase; }
+        .display-area { background: #000; height: 35px; border-radius: 4px; display: flex; align-items: center; padding: 0 10px; margin-bottom: 10px; letter-spacing: 3px; font-weight: bold; font-size: 18px; color: #fff; overflow: hidden; }
+        .btn-group { display: grid; grid-template-columns: repeat(4, 1fr); gap: 5px; }
+        .btn { border: none; padding: 10px 0; border-radius: 4px; font-weight: bold; cursor: pointer; color: white; transition: 0.2s; }
+        .btn-p { background: #007bff; } .btn-b { background: #dc3545; } .btn-t { background: #28a745; } .btn-del { background: #6c757d; }
+        .btn:active { transform: scale(0.95); opacity: 0.8; }
+        #predict-btn { width: 100%; padding: 15px; background: linear-gradient(135deg, #f1c40f, #e67e22); color: #000; border: none; border-radius: 8px; font-size: 18px; font-weight: 800; margin-top: 10px; cursor: pointer; }
+        .results-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-top: 20px; display: none; }
+        .res-card { background: #2d2d2d; padding: 15px; border-radius: 8px; text-align: center; border-bottom: 3px solid #ffcc00; }
+        .res-card small { font-size: 11px; color: #888; display: block; margin-bottom: 5px; }
+        .val { font-size: 22px; font-weight: bold; }
+        .P { color: #007bff; } .B { color: #dc3545; } .T { color: #28a745; }
     </style>
 </head>
 <body>
 
 <div class="container">
-    <h2 style="text-align: center;">AI Baccarat Pro</h2>
-    <p style="font-size: 12px; color: #888; text-align: center;">Nhập 7 tay gần nhất (P/B/T)</p>
-    
-    <div class="input-group">
-        <label>1. Cầu Chính (Main Road)</label>
-        <input type="text" id="road1" maxlength="7" placeholder="VD: PPBBPPP">
-    </div>
-    <div class="input-group">
-        <label>2. Cầu Rỗng (Big Eye Boy)</label>
-        <input type="text" id="road2" maxlength="7" placeholder="VD: BBPPBBP">
-    </div>
-    <div class="input-group">
-        <label>3. Cầu Đặc (Small Road)</label>
-        <input type="text" id="road3" maxlength="7" placeholder="VD: PPPBBBT">
-    </div>
-    <div class="input-group">
-        <label>4. Cầu Mưa (Cockroach Pig)</label>
-        <input type="text" id="road4" maxlength="7" placeholder="VD: TBBPPBB">
+    <h2 style="text-align: center; color: #ffcc00; margin: 0 0 15px 0;">BACCARAT AI 4.0</h2>
+
+    <!-- Bảng 1: Cầu Chính -->
+    <div class="road-section">
+        <div class="road-title">1. Cầu Chính</div>
+        <div class="display-area" id="disp1"></div>
+        <div class="btn-group">
+            <button class="btn btn-p" onclick="add('1','P')">P</button>
+            <button class="btn btn-b" onclick="add('1','B')">B</button>
+            <button class="btn btn-t" onclick="add('1','T')">T</button>
+            <button class="btn btn-del" onclick="del('1')">Xóa</button>
+        </div>
     </div>
 
-    <button onclick="predict()">XÁC NHẬN DỰ ĐOÁN</button>
+    <!-- Bảng 2: Cầu Rỗng -->
+    <div class="road-section">
+        <div class="road-title">2. Cầu Rỗng</div>
+        <div class="display-area" id="disp2"></div>
+        <div class="btn-group">
+            <button class="btn btn-p" onclick="add('2','P')">P</button>
+            <button class="btn btn-b" onclick="add('2','B')">B</button>
+            <button class="btn btn-t" onclick="add('2','T')">T</button>
+            <button class="btn btn-del" onclick="del('2')">Xóa</button>
+        </div>
+    </div>
 
-    <div class="results" id="resultsArea" style="display: none;">
-        <div class="res-box"><h4>Cầu Chính</h4><div id="out1" class="prediction">?</div></div>
-        <div class="res-box"><h4>Cầu Rỗng</h4><div id="out2" class="prediction">?</div></div>
-        <div class="res-box"><h4>Cầu Đặc</h4><div id="out3" class="prediction">?</div></div>
-        <div class="res-box"><h4>Cầu Mưa</h4><div id="out4" class="prediction">?</div></div>
+    <!-- Bảng 3: Cầu Đặc -->
+    <div class="road-section">
+        <div class="road-title">3. Cầu Đặc</div>
+        <div class="display-area" id="disp3"></div>
+        <div class="btn-group">
+            <button class="btn btn-p" onclick="add('3','P')">P</button>
+            <button class="btn btn-b" onclick="add('3','B')">B</button>
+            <button class="btn btn-t" onclick="add('3','T')">T</button>
+            <button class="btn btn-del" onclick="del('3')">Xóa</button>
+        </div>
+    </div>
+
+    <!-- Bảng 4: Cầu Mưa -->
+    <div class="road-section">
+        <div class="road-title">4. Cầu Mưa</div>
+        <div class="display-area" id="disp4"></div>
+        <div class="btn-group">
+            <button class="btn btn-p" onclick="add('4','P')">P</button>
+            <button class="btn btn-b" onclick="add('4','B')">B</button>
+            <button class="btn btn-t" onclick="add('4','T')">T</button>
+            <button class="btn btn-del" onclick="del('4')">Xóa</button>
+        </div>
+    </div>
+
+    <button id="predict-btn" onclick="processAI()">XÁC NHẬN DỰ ĐOÁN</button>
+
+    <div class="results-grid" id="resGrid">
+        <div class="res-card"><small>CẦU CHÍNH</small><div id="r1" class="val">-</div></div>
+        <div class="res-card"><small>CẦU RỖNG</small><div id="r2" class="val">-</div></div>
+        <div class="res-card"><small>CẦU ĐẶC</small><div id="r3" class="val">-</div></div>
+        <div class="res-card"><small>CẦU MƯA</small><div id="r4" class="val">-</div></div>
     </div>
 </div>
 
 <script>
-const history = "PPBBPPPBPPPTBPBBBPTBBBBBBPPBPBPBTTBBBBPTPTPTPBBTPPPBPBBBBPBTBBBPPB / PBBPPTBPPTPPPPPPBBBBBPBBPPPTBBBBBTBBBBPTPPBBBPBBPPPPBPBBPPPPBBPPPPB / BPPPBPTPPPPTTBBTBBPBBTPBBBBPPPTPBBPPBTPPPPBBBBPTPBBBBTPPPBBTBTPB / BTPPBPPTPPBPBPPBBTBBTBBBBBBTPBPPBBPTBBPPPPBBPPBBBPBBBBBBPPTBBPBBPP / PPPPPPBBPPBBTBBBPBTBPPBBTPPBTBBPBPBBPPPBBBPBPPBBBPBBBPPBBPTBBBBBTBPBBPB / BPPPBBBBBPBBBTTPBBPBPBBBPPBPBBBBPTPBBPBBTPBPBPPBPPBBPTBPPTPPPPBBBPPBP / PBTBBBPBPBPBBTBTBBBPBBPTBPPBPPBPPPBBPPBTPBPPTBBBBPBBPBBBPBPPBPPPB / BBPPPBTPPBPPBPPBBPPBBPBPBPPBPTBBBBPPPBPPTPBBBPPTBPPBBBBBBPPPPPBTB / PPPTBBTPBPPTPPBPBBPBBBBPTPPBBBPBBPBBPPPPBPBBBPBPBBTBPPPPPPBBPPTBPBP / PBBPBBPTBBBBBBBPTPBPPBPPPTPPBBPTBPTPBTPBTBBPBTTBBPBTTPPBPBPBBBPPPB / PBBPBTPBPBTPPPBPPPPPPTPBPBPBPBTPPPBPBPPPBBPTBPBPPBPPPBBPPPBPPBBPPT";
+    let data = { "1": "", "2": "", "3": "", "4": "" };
+    const historyData = "PPBBPPPBPPPTBPBBBPTBBBBBBPPBPBPBTTBBBBPTPTPTPBBTPPPBPBBBBPBTBBBPPB / PBBPPTBPPTPPPPPPBBBBBPBBPPPTBBBBBTBBBBPTPPBBBPBBPPPPBPBBPPPPBBPPPPB / BPPPBPTPPPPTTBBTBBPBBTPBBBBPPPTPBBPPBTPPPPBBBBPTPBBBBTPPPBBTBTPB / BTPPBPPTPPBPBPPBBTBBTBBBBBBTPBPPBBPTBBPPPPBBPPBBBPBBBBBBPPTBBPBBPP / PPPPPPBBPPBBTBBBPBTBPPBBTPPBTBBPBPBBPPPBBBPBPPBBBPBBBPPBBPTBBBBBTBPBBPB / BPPPBBBBBPBBBTTPBBPBPBBBPPBPBBBBPTPBBPBBTPBPBPPBPPBBPTBPPTPPPPBBBPPBP / PBTBBBPBPBPBBTBTBBBPBBPTBPPBPPBPPPBBPPBTPBPPTBBBBPBBPBBBPBPPBPPPB / BBPPPBTPPBPPBPPBBPPBBPBPBPPBPTBBBBPPPBPPTPBBBPPTBPPBBBBBBPPPPPBTB / PPPTBBTPBPPTPPBPBBPBBBBPTPPBBBPBBPBBPPPPBPBBBPBPBBTBPPPPPPBBPPTBPBP / PBBPBBPTBBBBBBBPTPBPPBPPPTPPBBPTBPTPBTPBTBBPBTTBBPBTTPPBPBPBBBPPPB / PBBPBTPBPBTPPPBPPPPPPTPBPBPBPBTPPPBPBPPPBBPTBPBPPBPPPBBPPPBPPBBPPT";
 
-function getPrediction(input) {
-    if (input.length < 3) return "?";
-    
-    // 1. Tìm kiếm chính xác chuỗi trong lịch sử
-    let index = history.indexOf(input);
-    if (index !== -1 && index + input.length < history.length) {
-        let nextChar = history[index + input.length];
-        if (nextChar !== " " && nextChar !== "/") return nextChar;
+    function add(id, char) {
+        if (data[id].length < 7) {
+            data[id] += char;
+            render(id);
+        }
     }
 
-    // 2. AI Logic (Xác suất N-gram) nếu không tìm thấy chuỗi khớp
-    let counts = { 'P': 0, 'B': 0, 'T': 0 };
-    let sub = input.slice(-3); // Lấy 3 tay cuối để soi xác suất
-    let pos = history.indexOf(sub);
-    while (pos !== -1) {
-        let next = history[pos + sub.length];
-        if (counts.hasOwnProperty(next)) counts[next]++;
-        pos = history.indexOf(sub, pos + 1);
+    function del(id) {
+        data[id] = data[id].slice(0, -1);
+        render(id);
     }
-    
-    let prediction = Object.keys(counts).reduce((a, b) => counts[a] > counts[b] ? a : b);
-    return counts[prediction] > 0 ? prediction : (Math.random() > 0.5 ? "P" : "B");
-}
 
-function predict() {
-    const roads = [
-        document.getElementById('road1').value.toUpperCase(),
-        document.getElementById('road2').value.toUpperCase(),
-        document.getElementById('road3').value.toUpperCase(),
-        document.getElementById('road4').value.toUpperCase()
-    ];
+    function render(id) {
+        const el = document.getElementById('disp' + id);
+        el.innerHTML = data[id].split('').map(c => `<span class="${c}">${c}</span>`).join('');
+    }
 
-    roads.forEach((val, i) => {
-        let res = getPrediction(val);
-        let el = document.getElementById('out' + (i + 1));
-        el.innerText = res === "P" ? "PLAYER" : (res === "B" ? "BANKER" : (res === "T" ? "TIE" : "?"));
-        el.className = "prediction " + res;
-    });
+    function coreAI(input) {
+        if (!input) return "?";
+        // Ưu tiên 1: Khớp chuỗi chính xác trong lịch sử
+        let idx = historyData.indexOf(input);
+        if (idx !== -1 && (idx + input.length) < historyData.length) {
+            let next = historyData[idx + input.length];
+            if (["P", "B", "T"].includes(next)) return next;
+        }
+        // Ưu tiên 2: Phân tích tần suất (AI đơn giản)
+        let last3 = input.slice(-3);
+        let counts = { 'P': 0, 'B': 0, 'T': 0 };
+        let pos = historyData.indexOf(last3);
+        while (pos !== -1) {
+            let char = historyData[pos + last3.length];
+            if (counts.hasOwnProperty(char)) counts[char]++;
+            pos = historyData.indexOf(last3, pos + 1);
+        }
+        let best = Object.keys(counts).reduce((a, b) => counts[a] > counts[b] ? a : b);
+        return counts[best] > 0 ? best : (Math.random() > 0.5 ? "P" : "B");
+    }
 
-    document.getElementById('resultsArea').style.display = 'grid';
-}
+    function processAI() {
+        document.getElementById('resGrid').style.display = 'grid';
+        for (let i = 1; i <= 4; i++) {
+            let res = coreAI(data[i.toString()]);
+            let target = document.getElementById('r' + i);
+            let label = res === "P" ? "PLAYER" : (res === "B" ? "BANKER" : (res === "T" ? "HOÀ" : "CHỜ..."));
+            target.innerText = label;
+            target.className = "val " + res;
+        }
+    }
 </script>
 </body>
 </html>
