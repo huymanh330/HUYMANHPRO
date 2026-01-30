@@ -5,91 +5,107 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>HUY MẠNH AI</title>
     <style>
-        body { font-family: Arial, sans-serif; display: flex; flex-direction: column; align-items: center; background: #f0f2f5; padding-top: 50px; }
-        .container { background: white; padding: 20px; border-radius: 15px; box-shadow: 0 4px 15px rgba(0,0,0,0.2); text-align: center; width: 320px; }
-        h1 { color: #1a73e8; margin-bottom: 20px; }
-        .display-area { display: flex; justify-content: space-between; margin-bottom: 15px; gap: 10px; }
-        .screen { flex: 1; height: 50px; border: 2px solid #ddd; border-radius: 8px; display: flex; align-items: center; justify-content: center; font-size: 24px; font-weight: bold; background: #fff; }
-        .keypad { display: grid; grid-template-columns: repeat(3, 1fr); gap: 10px; }
-        button { padding: 15px; font-size: 18px; border: none; border-radius: 8px; cursor: pointer; background: #e1e4e8; transition: 0.2s; }
-        button:active { background: #ccc; }
-        .btn-clear { grid-column: span 3; background: #ff4757; color: white; margin-top: 10px; }
-        #result-box { margin-top: 20px; padding: 15px; font-size: 28px; font-weight: bold; color: #d63031; min-height: 40px; border-top: 2px solid #eee; }
+        body { font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; display: flex; flex-direction: column; align-items: center; background: #121212; color: white; padding-top: 30px; }
+        .container { background: #1e1e1e; padding: 25px; border-radius: 20px; box-shadow: 0 10px 30px rgba(0,0,0,0.5); text-align: center; width: 340px; border: 1px solid #333; }
+        h1 { color: #00d2ff; margin-bottom: 20px; letter-spacing: 2px; text-shadow: 0 0 10px rgba(0,210,255,0.5); }
+        .display-area { display: flex; justify-content: space-between; margin-bottom: 20px; gap: 15px; }
+        .screen { flex: 1; height: 60px; border: 2px solid #00d2ff; border-radius: 12px; display: flex; align-items: center; justify-content: center; font-size: 28px; font-weight: bold; background: #000; color: #00d2ff; box-shadow: inset 0 0 5px #00d2ff; }
+        .keypad { display: grid; grid-template-columns: repeat(3, 1fr); gap: 12px; }
+        button { padding: 20px; font-size: 20px; border: none; border-radius: 10px; cursor: pointer; background: #333; color: white; transition: 0.2s; font-weight: bold; }
+        button:active { background: #00d2ff; color: black; transform: scale(0.95); }
+        .btn-clear { grid-column: span 3; background: #ff4757; color: white; margin-top: 10px; text-transform: uppercase; }
+        #result-box { margin-top: 20px; padding: 15px; font-size: 32px; font-weight: bold; color: #ff9f43; min-height: 50px; border-top: 1px solid #444; text-shadow: 0 0 10px rgba(255,159,67,0.5); }
     </style>
 </head>
 <body>
 
 <div class="container">
-    <h1>HUY MẠNH</h1>
+    <h1>HUY MẠNH AI</h1>
     
     <div class="display-area">
         <div id="num1" class="screen">--</div>
         <div id="num2" class="screen">--</div>
     </div>
 
-    <div class="keypad" id="keypad">
+    <div class="keypad">
         <button onclick="press(1)">1</button><button onclick="press(2)">2</button><button onclick="press(3)">3</button>
         <button onclick="press(4)">4</button><button onclick="press(5)">5</button><button onclick="press(6)">6</button>
         <button onclick="press(7)">7</button><button onclick="press(8)">8</button><button onclick="press(9)">9</button>
         <button onclick="press(0)" style="grid-column: span 3;">0</button>
-        <button class="btn-clear" onclick="reset()">XÓA TẤT CẢ</button>
+        <button class="btn-clear" onclick="reset()">XÓA HẾT</button>
     </div>
 
-    <div id="result-box">CHỜ NHẬP...</div>
+    <div id="result-box">NHẬP SỐ...</div>
 </div>
 
 <script>
+    // Dữ liệu tra cứu dựa trên danh sách bạn cung cấp
     const data = {
-        "50":"Cái","26":"Cái","68":"Cái/Con","47":"Con","85":"Con/Cái","82":"Con","86":"Cái","46":"Con","71":"Con/Cái","69":"Cái","24":"Con/Cái","96":"Con","54":"Con","72":"Con","41":"H","66":"Con/Cái","91":"Cái","42":"Con","31":"Con","63":"Con","64":"Con","93":"Con","70":"Con","90":"Cái","01":"H/Cái","22":"Cái","58":"Con","87":"Cái","08":"Cái","38":"Con/Cái","84":"Cái","12":"Con/Cái","28":"Cái/H","67":"Con","76":"Cái","25":"Con/H","94":"Cái","06":"Con","43":"Cái","07":"Con/Cái","34":"Cái","57":"Cái","02":"Cái","78":"Cái","80":"Con","16":"Cái","04":"Con","19":"H/Cái/Con","89":"Cái","27":"Cái","35":"Cái","39":"Con","81":"Cái","49":"Cái","36":"Cái","99":"H"
+        "50":"Cái","26":"Cái","68":"Cái","47":"Con","85":"Con/Cái","82":"Con","86":"Cái","46":"Con","71":"Con/Cái","69":"Cái","24":"Con/Cái","96":"Con","54":"Con","72":"Con","41":"H","66":"Con/Cái","91":"Cái","42":"Con","31":"Con","63":"Con","64":"Con","93":"Con","70":"Con","90":"Cái","01":"H/Cái","22":"Cái","58":"Con","87":"Cái","08":"Cái","38":"Con/Cái","84":"Cái","12":"Con/Cái","28":"Cái/H","67":"Con","76":"Cái","25":"Con/H","94":"Cái","06":"Con","43":"Cái","07":"Con/Cái","34":"Cái","57":"Cái","02":"Cái","78":"Cái","80":"Con","16":"Cái","04":"Con","19":"H/Cái/Con","89":"Cái","27":"Cái","35":"Cái","39":"Con","81":"Cái","49":"Cái","36":"Cái","99":"H"
     };
 
-    let currentInput = "";
-    let inputs = [];
+    let currentDigits = ""; 
+    let numbers = []; 
 
-    function press(num) {
-        if (inputs.length >= 2) return;
+    function press(n) {
+        currentDigits += n;
         
-        currentInput += num;
-        if (currentInput.length === 2) {
-            inputs.push(parseInt(currentInput));
-            document.getElementById(`num${inputs.length}`).innerText = currentInput;
-            currentInput = "";
+        if (currentDigits.length === 2) {
+            let val = parseInt(currentDigits);
+            numbers.push(val);
             
-            if (inputs.length === 2) calculate();
+            // Hiển thị số vừa nhập vào ô tương ứng
+            updateScreens();
+            currentDigits = "";
+
+            // Nếu đã đủ 2 số thì tính toán
+            if (numbers.length === 2) {
+                calculate();
+            }
         } else {
-            document.getElementById(`num${inputs.length + 1}`).innerText = currentInput;
+            // Hiển thị số lẻ đang bấm (chờ số thứ 2)
+            if (numbers.length === 0) document.getElementById('num1').innerText = currentDigits + "_";
+            else document.getElementById('num2').innerText = currentDigits + "_";
         }
     }
 
     function calculate() {
-        let a = inputs[0];
-        let b = inputs[1];
-        let max = Math.max(a, b);
-        let min = Math.min(a, b);
+        let n1 = numbers[0];
+        let n2 = numbers[1];
+        let max = Math.max(n1, n2);
+        let min = Math.min(n1, n2);
+        let displayResult = "";
 
-        // Quy luật bỏ tay: số bé bằng nửa số lớn
+        // Kiểm tra quy luật bỏ tay (số bé bằng 1/2 số lớn)
         if (min !== 0 && max / min === 2) {
-            showResult("BỎ TAY");
-            return;
+            displayResult = "BỎ TAY";
+        } else {
+            let diff = max - min;
+            let key = diff.toString().padStart(2, '0');
+            displayResult = data[key] || "BỎ TAY";
         }
 
-        let diff = max - min;
-        let diffStr = diff.toString().padStart(2, '0');
-        
-        let res = data[diffStr];
-        showResult(res ? res : "BỎ TAY");
+        document.getElementById('result-box').innerText = displayResult;
+
+        // CƠ CHẾ CUỐN SỐ: Số thứ 2 nhảy sang ô số 1, ô số 2 trống để nhập tiếp
+        setTimeout(() => {
+            numbers.shift(); // Xóa số đầu tiên
+            updateScreens();
+            document.getElementById('num2').innerText = "--";
+        }, 800); // Đợi 0.8 giây để người dùng kịp nhìn rồi mới dịch chuyển
     }
 
-    function showResult(text) {
-        document.getElementById('result-box').innerText = text;
+    function updateScreens() {
+        document.getElementById('num1').innerText = numbers[0] !== undefined ? numbers[0].toString().padStart(2, '0') : "--";
+        document.getElementById('num2').innerText = numbers[1] !== undefined ? numbers[1].toString().padStart(2, '0') : "--";
     }
 
     function reset() {
-        currentInput = "";
-        inputs = [];
+        currentDigits = "";
+        numbers = [];
         document.getElementById('num1').innerText = "--";
         document.getElementById('num2').innerText = "--";
-        document.getElementById('result-box').innerText = "CHỜ NHẬP...";
+        document.getElementById('result-box').innerText = "NHẬP SỐ...";
     }
 </script>
 
