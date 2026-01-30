@@ -3,140 +3,99 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Baccarat AI Predictor - Pro</title>
+    <title>AI Prediction Tool</title>
     <style>
-        body { font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; background: #121212; color: #e0e0e0; display: flex; flex-direction: column; align-items: center; padding: 10px; margin: 0; }
-        .container { background: #1e1e1e; padding: 15px; border-radius: 12px; box-shadow: 0 8px 32px rgba(0,0,0,0.8); width: 95%; max-width: 450px; border: 1px solid #333; }
-        .road-section { background: #262626; padding: 12px; border-radius: 8px; margin-bottom: 15px; border-left: 4px solid #ffcc00; }
-        .road-title { font-size: 13px; font-weight: bold; color: #ffcc00; margin-bottom: 8px; text-transform: uppercase; }
-        .display-area { background: #000; height: 35px; border-radius: 4px; display: flex; align-items: center; padding: 0 10px; margin-bottom: 10px; letter-spacing: 3px; font-weight: bold; font-size: 18px; color: #fff; overflow: hidden; }
-        .btn-group { display: grid; grid-template-columns: repeat(4, 1fr); gap: 5px; }
-        .btn { border: none; padding: 10px 0; border-radius: 4px; font-weight: bold; cursor: pointer; color: white; transition: 0.2s; }
-        .btn-p { background: #007bff; } .btn-b { background: #dc3545; } .btn-t { background: #28a745; } .btn-del { background: #6c757d; }
-        .btn:active { transform: scale(0.95); opacity: 0.8; }
-        #predict-btn { width: 100%; padding: 15px; background: linear-gradient(135deg, #f1c40f, #e67e22); color: #000; border: none; border-radius: 8px; font-size: 18px; font-weight: 800; margin-top: 10px; cursor: pointer; }
-        .results-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-top: 20px; display: none; }
-        .res-card { background: #2d2d2d; padding: 15px; border-radius: 8px; text-align: center; border-bottom: 3px solid #ffcc00; }
-        .res-card small { font-size: 11px; color: #888; display: block; margin-bottom: 5px; }
-        .val { font-size: 22px; font-weight: bold; }
-        .P { color: #007bff; } .B { color: #dc3545; } .T { color: #28a745; }
+        body {
+            margin: 0;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            background-color: #1a1a1a;
+            color: white;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            overflow: hidden;
+        }
+
+        #container {
+            text-align: center;
+            z-index: 10;
+        }
+
+        #result {
+            font-size: 50vh; /* Chữ hiện to toàn màn hình */
+            font-weight: bold;
+            display: none;
+            text-shadow: 0 0 20px rgba(255,255,255,0.5);
+        }
+
+        .btn-predict {
+            padding: 20px 40px;
+            font-size: 24px;
+            cursor: pointer;
+            background: linear-gradient(45deg, #00c6ff, #0072ff);
+            border: none;
+            color: white;
+            border-radius: 50px;
+            transition: transform 0.2s, box-shadow 0.2s;
+            box-shadow: 0 4px 15px rgba(0, 114, 255, 0.4);
+        }
+
+        .btn-predict:active {
+            transform: scale(0.95);
+        }
+
+        /* Màu sắc cho kết quả */
+        .color-p { color: #3498db; } /* Blue cho Player */
+        .color-b { color: #e74c3c; } /* Red cho Banker */
+
+        #loading {
+            display: none;
+            font-size: 24px;
+            font-style: italic;
+            margin-bottom: 20px;
+        }
     </style>
 </head>
 <body>
 
-<div class="container">
-    <h2 style="text-align: center; color: #ffcc00; margin: 0 0 15px 0;">BACCARAT AI 4.0</h2>
-
-    <!-- Bảng 1: Cầu Chính -->
-    <div class="road-section">
-        <div class="road-title">1. Cầu Chính</div>
-        <div class="display-area" id="disp1"></div>
-        <div class="btn-group">
-            <button class="btn btn-p" onclick="add('1','P')">P</button>
-            <button class="btn btn-b" onclick="add('1','B')">B</button>
-            <button class="btn btn-t" onclick="add('1','T')">T</button>
-            <button class="btn btn-del" onclick="del('1')">Xóa</button>
-        </div>
+    <div id="container">
+        <div id="loading">AI ĐANG PHÂN TÍCH...</div>
+        <div id="result"></div>
+        <button class="btn-predict" onclick="predict()">DỰ ĐOÁN NGAY</button>
     </div>
 
-    <!-- Bảng 2: Cầu Rỗng -->
-    <div class="road-section">
-        <div class="road-title">2. Cầu Rỗng</div>
-        <div class="display-area" id="disp2"></div>
-        <div class="btn-group">
-            <button class="btn btn-p" onclick="add('2','P')">P</button>
-            <button class="btn btn-b" onclick="add('2','B')">B</button>
-            <button class="btn btn-t" onclick="add('2','T')">T</button>
-            <button class="btn btn-del" onclick="del('2')">Xóa</button>
-        </div>
-    </div>
+    <script>
+        function predict() {
+            const btn = document.querySelector('.btn-predict');
+            const resultDiv = document.getElementById('result');
+            const loading = document.getElementById('loading');
 
-    <!-- Bảng 3: Cầu Đặc -->
-    <div class="road-section">
-        <div class="road-title">3. Cầu Đặc</div>
-        <div class="display-area" id="disp3"></div>
-        <div class="btn-group">
-            <button class="btn btn-p" onclick="add('3','P')">P</button>
-            <button class="btn btn-b" onclick="add('3','B')">B</button>
-            <button class="btn btn-t" onclick="add('3','T')">T</button>
-            <button class="btn btn-del" onclick="del('3')">Xóa</button>
-        </div>
-    </div>
+            // Ẩn nút và kết quả cũ
+            btn.style.display = 'none';
+            resultDiv.style.display = 'none';
+            
+            // Hiệu ứng loading giả cho "ngầu"
+            loading.style.display = 'block';
 
-    <!-- Bảng 4: Cầu Mưa -->
-    <div class="road-section">
-        <div class="road-title">4. Cầu Mưa</div>
-        <div class="display-area" id="disp4"></div>
-        <div class="btn-group">
-            <button class="btn btn-p" onclick="add('4','P')">P</button>
-            <button class="btn btn-b" onclick="add('4','B')">B</button>
-            <button class="btn btn-t" onclick="add('4','T')">T</button>
-            <button class="btn btn-del" onclick="del('4')">Xóa</button>
-        </div>
-    </div>
+            setTimeout(() => {
+                loading.style.display = 'none';
+                
+                // Thuật toán ngẫu nhiên P hoặc B
+                const choices = ['P', 'B'];
+                const randomChoice = choices[Math.floor(Math.random() * choices.length)];
+                
+                resultDiv.innerText = randomChoice;
+                resultDiv.className = randomChoice === 'P' ? 'color-p' : 'color-b';
+                resultDiv.style.display = 'block';
 
-    <button id="predict-btn" onclick="processAI()">XÁC NHẬN DỰ ĐOÁN</button>
+                // Sau 3 giây hiện lại nút bấm
+                setTimeout(() => {
+                    btn.style.display = 'inline-block';
+                }, 2000);
 
-    <div class="results-grid" id="resGrid">
-        <div class="res-card"><small>CẦU CHÍNH</small><div id="r1" class="val">-</div></div>
-        <div class="res-card"><small>CẦU RỖNG</small><div id="r2" class="val">-</div></div>
-        <div class="res-card"><small>CẦU ĐẶC</small><div id="r3" class="val">-</div></div>
-        <div class="res-card"><small>CẦU MƯA</small><div id="r4" class="val">-</div></div>
-    </div>
-</div>
-
-<script>
-    let data = { "1": "", "2": "", "3": "", "4": "" };
-    const historyData = "PPBBPPPBPPPTBPBBBPTBBBBBBPPBPBPBTTBBBBPTPTPTPBBTPPPBPBBBBPBTBBBPPB / PBBPPTBPPTPPPPPPBBBBBPBBPPPTBBBBBTBBBBPTPPBBBPBBPPPPBPBBPPPPBBPPPPB / BPPPBPTPPPPTTBBTBBPBBTPBBBBPPPTPBBPPBTPPPPBBBBPTPBBBBTPPPBBTBTPB / BTPPBPPTPPBPBPPBBTBBTBBBBBBTPBPPBBPTBBPPPPBBPPBBBPBBBBBBPPTBBPBBPP / PPPPPPBBPPBBTBBBPBTBPPBBTPPBTBBPBPBBPPPBBBPBPPBBBPBBBPPBBPTBBBBBTBPBBPB / BPPPBBBBBPBBBTTPBBPBPBBBPPBPBBBBPTPBBPBBTPBPBPPBPPBBPTBPPTPPPPBBBPPBP / PBTBBBPBPBPBBTBTBBBPBBPTBPPBPPBPPPBBPPBTPBPPTBBBBPBBPBBBPBPPBPPPB / BBPPPBTPPBPPBPPBBPPBBPBPBPPBPTBBBBPPPBPPTPBBBPPTBPPBBBBBBPPPPPBTB / PPPTBBTPBPPTPPBPBBPBBBBPTPPBBBPBBPBBPPPPBPBBBPBPBBTBPPPPPPBBPPTBPBP / PBBPBBPTBBBBBBBPTPBPPBPPPTPPBBPTBPTPBTPBTBBPBTTBBPBTTPPBPBPBBBPPPB / PBBPBTPBPBTPPPBPPPPPPTPBPBPBPBTPPPBPBPPPBBPTBPBPPBPPPBBPPPBPPBBPPT";
-
-    function add(id, char) {
-        if (data[id].length < 7) {
-            data[id] += char;
-            render(id);
+            }, 1000); // Đợi 1 giây để tạo cảm giác AI đang tính
         }
-    }
-
-    function del(id) {
-        data[id] = data[id].slice(0, -1);
-        render(id);
-    }
-
-    function render(id) {
-        const el = document.getElementById('disp' + id);
-        el.innerHTML = data[id].split('').map(c => `<span class="${c}">${c}</span>`).join('');
-    }
-
-    function coreAI(input) {
-        if (!input) return "?";
-        // Ưu tiên 1: Khớp chuỗi chính xác trong lịch sử
-        let idx = historyData.indexOf(input);
-        if (idx !== -1 && (idx + input.length) < historyData.length) {
-            let next = historyData[idx + input.length];
-            if (["P", "B", "T"].includes(next)) return next;
-        }
-        // Ưu tiên 2: Phân tích tần suất (AI đơn giản)
-        let last3 = input.slice(-3);
-        let counts = { 'P': 0, 'B': 0, 'T': 0 };
-        let pos = historyData.indexOf(last3);
-        while (pos !== -1) {
-            let char = historyData[pos + last3.length];
-            if (counts.hasOwnProperty(char)) counts[char]++;
-            pos = historyData.indexOf(last3, pos + 1);
-        }
-        let best = Object.keys(counts).reduce((a, b) => counts[a] > counts[b] ? a : b);
-        return counts[best] > 0 ? best : (Math.random() > 0.5 ? "P" : "B");
-    }
-
-    function processAI() {
-        document.getElementById('resGrid').style.display = 'grid';
-        for (let i = 1; i <= 4; i++) {
-            let res = coreAI(data[i.toString()]);
-            let target = document.getElementById('r' + i);
-            let label = res === "P" ? "PLAYER" : (res === "B" ? "BANKER" : (res === "T" ? "HOÀ" : "CHỜ..."));
-            target.innerText = label;
-            target.className = "val " + res;
-        }
-    }
-</script>
+    </script>
 </body>
 </html>
